@@ -114,6 +114,7 @@ export function TimelineRenderer() {
   };
 
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+  const [subMenu, setSubMenu] = useState<string | null>(null);
 
   const addEvent = (label: string, category: string, cost: number) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -133,11 +134,15 @@ export function TimelineRenderer() {
           </div>
           
           <div className="relative">
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Add Event</label>
             <button 
               onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all"
+              className="flex items-center justify-between w-56 px-4 py-2.5 bg-white border border-slate-200 hover:border-indigo-400 rounded-xl text-sm font-bold text-slate-700 shadow-sm transition-all group"
             >
-              <span>+ Add Event</span>
+              <span className={isAddMenuOpen ? 'text-indigo-600' : 'text-slate-500 font-bold'}>
+                {isAddMenuOpen ? 'Selecting...' : '+ Add Event'}
+              </span>
+              <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isAddMenuOpen ? 'rotate-90 text-indigo-500' : 'rotate-0'}`} />
             </button>
 
             <AnimatePresence>
@@ -145,26 +150,33 @@ export function TimelineRenderer() {
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsAddMenuOpen(false)} />
                   <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 4, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute left-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 p-2 overflow-hidden"
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                    className="absolute left-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 p-1.5 overflow-hidden"
                   >
-                    {[
-                      { label: 'Savings', cat: 'Finance', cost: 100000 },
-                      { label: 'Mutual Funds', cat: 'Investment', cost: 50000 },
-                      { label: 'House Payment', cat: 'Property', cost: 2500000 },
-                      { label: 'EMI', cat: 'Debt', cost: 15000 }
-                    ].map((item) => (
-                      <button
-                        key={item.label}
-                        onClick={() => addEvent(item.label, item.cat, item.cost)}
-                        className="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all flex items-center justify-between group"
-                      >
-                        {item.label}
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
-                      </button>
-                    ))}
+                    <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                      {[
+                        { label: 'Savings', cat: 'Finance', cost: 100000 },
+                        { label: 'House Payment', cat: 'Property', cost: 2500000 },
+                        { label: 'Loan Payment', cat: 'Debt', cost: 50000 },
+                        { label: 'EMI', cat: 'Debt', cost: 15000 },
+                        { label: 'SIP', cat: 'Investment', cost: 5000 },
+                        { label: 'Mutual Fund', cat: 'Investment', cost: 25000 }
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => {
+                            addEvent(item.label, item.cat, item.cost);
+                            setIsAddMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-all flex items-center justify-between group"
+                        >
+                          {item.label}
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-100 group-hover:bg-indigo-400 transition-colors" />
+                        </button>
+                      ))}
+                    </div>
                   </motion.div>
                 </>
               )}

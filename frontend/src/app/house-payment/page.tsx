@@ -11,8 +11,8 @@ export default function HousePaymentPage() {
 
   const { emi, totalInterest, totalPayment, affordableStatus } = useMemo(() => {
     const P = house.propertyPrice - house.downPayment;
-    const R = house.loanRate / 12 / 100;
-    const N = house.tenureYears * 12;
+    const R = house.interestRate / 12 / 100;
+    const N = house.tenure * 12;
 
     let emiVal = 0;
     let totalInt = 0;
@@ -66,8 +66,8 @@ export default function HousePaymentPage() {
         <InputCard title="Loan Interest Rate (%)" icon={<Percent className="w-5 h-5 text-indigo-600" />}>
           <input 
             type="number" 
-            value={house.loanRate} 
-            onChange={(e) => setHouseInput('loanRate', Number(e.target.value))}
+            value={house.interestRate} 
+            onChange={(e) => setHouseInput('interestRate', Number(e.target.value))}
             className="w-full border border-gray-200 rounded-xl p-3 text-lg font-bold text-gray-900 focus:border-indigo-500 bg-gray-50 outline-none transition-all"
           />
         </InputCard>
@@ -75,8 +75,8 @@ export default function HousePaymentPage() {
         <InputCard title="Tenure (Years)" icon={<Calendar className="w-5 h-5 text-indigo-600" />}>
           <input 
             type="number" 
-            value={house.tenureYears} 
-            onChange={(e) => setHouseInput('tenureYears', Number(e.target.value))}
+            value={house.tenure} 
+            onChange={(e) => setHouseInput('tenure', Number(e.target.value))}
             className="w-full border border-gray-200 rounded-xl p-3 text-lg font-bold text-gray-900 focus:border-indigo-500 bg-gray-50 outline-none transition-all"
           />
         </InputCard>

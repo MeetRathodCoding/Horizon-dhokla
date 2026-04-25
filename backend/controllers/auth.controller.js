@@ -10,12 +10,8 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-  const { name, email, password, isVerified } = req.body;
+  const { name, email, password } = req.body;
   
-  if (!isVerified) {
-    return res.status(400).json({ message: 'Email must be verified first' });
-  }
-
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -29,7 +25,7 @@ const registerUser = async (req, res) => {
       name, 
       email, 
       passwordHash, 
-      isEmailVerified: true 
+      isEmailVerified: true // Automatically set to true since we removed OTP
     });
     
     res.status(201).json({

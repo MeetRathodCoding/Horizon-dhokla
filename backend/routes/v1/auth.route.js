@@ -7,7 +7,4 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/google-login', googleLogin);
 
-router.post('/send-otp', sendOTP);
-router.post('/verify-otp', verifyOTP);
-
 module.exports = router;

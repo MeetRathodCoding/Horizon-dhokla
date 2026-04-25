@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MilestoneNode } from './MilestoneNode';
 import { DndContext, useSensor, useSensors, PointerSensor, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
+import { ChevronRight } from 'lucide-react';
 
 export function TimelineRenderer() {
   const { results, milestones, updateMilestone } = useSimulationStore();
@@ -112,20 +113,69 @@ export function TimelineRenderer() {
     }),
   };
 
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+
+  const addEvent = (label: string, category: string, cost: number) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    updateMilestone(id, { label, age: 35, cost, category });
+    setIsAddMenuOpen(false);
+  };
+
   return (
-    <div className="relative w-full h-full flex flex-col bg-slate-900/50 rounded-2xl border border-slate-800 p-4" ref={containerRef}>
+    <div className="relative w-full h-full flex flex-col bg-white rounded-2xl border border-slate-200 p-4 shadow-sm" ref={containerRef}>
       <header className="z-10 flex justify-between items-center mb-4">
-        <div className="flex gap-2 items-center bg-slate-800/80 backdrop-blur border border-slate-700 px-3 py-1.5 rounded-full shadow-lg">
-          <div className={`w-3 h-3 rounded-full shadow-[0_0_8px_currentColor] ${hasShortfall ? 'bg-amber-500 text-amber-500' : 'bg-emerald-500 text-emerald-500'}`}></div>
-          <span className={`text-sm font-semibold ${hasShortfall ? 'text-amber-400' : 'text-emerald-400'}`}>
-            {hasShortfall ? 'Shortfall Risk' : 'Safely Funded'}
-          </span>
+        <div className="flex gap-4 items-center">
+          <div className="flex gap-2 items-center bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full shadow-sm">
+            <div className={`w-3 h-3 rounded-full ${hasShortfall ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
+            <span className={`text-sm font-semibold ${hasShortfall ? 'text-amber-600' : 'text-emerald-600'}`}>
+              {hasShortfall ? 'Shortfall Risk' : 'Safely Funded'}
+            </span>
+          </div>
+          
+          <div className="relative">
+            <button 
+              onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all"
+            >
+              <span>+ Add Event</span>
+            </button>
+
+            <AnimatePresence>
+              {isAddMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsAddMenuOpen(false)} />
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute left-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 p-2 overflow-hidden"
+                  >
+                    {[
+                      { label: 'Savings', cat: 'Finance', cost: 100000 },
+                      { label: 'Mutual Funds', cat: 'Investment', cost: 50000 },
+                      { label: 'House Payment', cat: 'Property', cost: 2500000 },
+                      { label: 'EMI', cat: 'Debt', cost: 15000 }
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => addEvent(item.label, item.cat, item.cost)}
+                        className="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all flex items-center justify-between group"
+                      >
+                        {item.label}
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                      </button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
-        <div className="bg-slate-800/80 backdrop-blur p-1 flex gap-1 rounded-lg border border-slate-700 shadow-lg">
-          <button onClick={() => setDomain([20, 80])} className={`px-3 py-1.5 text-xs font-medium rounded ${domain[1]-domain[0]>50 ? 'bg-slate-700 text-slate-50' : 'text-slate-400 hover:text-slate-200'}`}>Full View</button>
-          <button onClick={() => setDomain([30, 50])} className={`px-3 py-1.5 text-xs font-medium rounded ${domain[0]===30 && domain[1]===50 ? 'bg-slate-700 text-slate-50' : 'text-slate-400 hover:text-slate-200'}`}>30 to 50</button>
-          <button onClick={() => setDomain([50, 80])} className={`px-3 py-1.5 text-xs font-medium rounded ${domain[0]===50 && domain[1]===80 ? 'bg-slate-700 text-slate-50' : 'text-slate-400 hover:text-slate-200'}`}>Retirement</button>
+        <div className="bg-slate-50 p-1 flex gap-1 rounded-lg border border-slate-200">
+          <button onClick={() => setDomain([20, 80])} className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${domain[1]-domain[0]>50 ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}>Full View</button>
+          <button onClick={() => setDomain([30, 50])} className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${domain[0]===30 && domain[1]===50 ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}>30 to 50</button>
+          <button onClick={() => setDomain([50, 80])} className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${domain[0]===50 && domain[1]===80 ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}>Retirement</button>
         </div>
       </header>
 
@@ -133,32 +183,32 @@ export function TimelineRenderer() {
         <svg width={width} height={height} className="overflow-visible absolute inset-0">
           <defs>
             <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-               <stop offset="0%" stopColor="#3B82F6" />
-               <stop offset="100%" stopColor="#8B5CF6" />
+               <stop offset="0%" stopColor="#6366F1" />
+               <stop offset="100%" stopColor="#818CF8" />
             </linearGradient>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
           {ticks.map(tick => (
-            <g key={tick} className="text-slate-800/50 transition-all duration-300" style={{ transform: `translateX(${xScale(tick)}px)` }}>
+            <g key={tick} className="text-slate-200 transition-all duration-300" style={{ transform: `translateX(${xScale(tick)}px)` }}>
               <line x1={0} y1={40} x2={0} y2={height - 60} stroke="currentColor" strokeWidth={1} strokeDasharray="4 4" />
-              <text x={0} y={height - 40} textAnchor="middle" fill="#475569" fontSize="11px" fontWeight="600">Age {tick}</text>
+              <text x={0} y={height - 35} textAnchor="middle" fill="#94a3b8" fontSize="11px" fontWeight="700">Age {tick}</text>
             </g>
           ))}
 
           <motion.line 
             animate={{ y1: zeroY, y2: zeroY }} 
             initial={false}
-            x1={60} x2={width - 60} stroke="#334155" strokeWidth={2} strokeDasharray="5 5"
+            x1={60} x2={width - 60} stroke="#E2E8F0" strokeWidth={2} strokeDasharray="5 5"
           />
           
           <motion.path
             initial={false}
             animate={{ d: pathData }}
-            transition={{ type: 'spring', bounce: 0.1, duration: 0.6 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.8 }}
             fill="none"
             stroke="url(#lineGrad)"
             strokeWidth={4}
@@ -171,7 +221,7 @@ export function TimelineRenderer() {
           sensors={sensors} 
           onDragStart={handleDragStart} 
           onDragEnd={handleDragEnd}
-          modifiers={[restrictToHorizontalAxis, customSnapModifier]}
+          modifiers={[restrictToHorizontalAxis]}
         >
           <div className="absolute inset-0 pointer-events-none">
             {milestones.map(m => {

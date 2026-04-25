@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
+import { Mail, Lock, ArrowRight, AlertCircle, Shield } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function LoginPage() {
@@ -16,27 +16,44 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken: tokenResponse.access_token }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setUser(data);
+          router.push('/');
+        }
+      } catch (err) {
+        setError('Google login failed');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => setError('Google Login Failed'),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/auth/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Login failed');
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      // Success
       setUser(data);
       router.push('/');
     } catch (err: any) {
@@ -46,66 +63,34 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/v1/auth/google-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken: credentialResponse.credential }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setUser(data);
-        router.push('/');
-      }
-    } catch (err) {
-      setError('Google login failed');
-    }
-  };
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6 relative overflow-hidden">
-      {/* Background accents */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full"></div>
-        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full"></div>
-      </div>
-
+    <div className="min-h-screen w-full flex items-center justify-center p-6 bg-white relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="w-full max-w-md z-10"
+        className="w-full max-w-[480px]"
       >
-        <div className="text-center mb-8">
-          <motion.div 
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 mb-4 shadow-xl shadow-indigo-600/20"
-          >
-            <Lock className="w-8 h-8 text-white" />
-          </motion.div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
-          <p className="text-gray-500 mt-2 text-sm">Enter your credentials to access your account</p>
+        <div className="text-center mb-10 space-y-3">
+          <div className="w-20 h-20 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary/20 rotate-3">
+            <Shield className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-4xl font-black text-black tracking-tighter">Welcome Back</h1>
+          <p className="text-slate-700 font-bold tracking-tight">Enter your credentials to access <span className="text-primary font-black">Ascentia</span></p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl shadow-gray-200/50 relative">
+        <div className="horizon-card p-10 bg-gradient-surface space-y-8">
           {error && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-sm"
-            >
-              <AlertCircle className="w-5 h-5 flex-shrink-0" />
-              <p className="font-medium">{error}</p>
-            </motion.div>
+            <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-red-600 shadow-glow" />
+              {error}
+            </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Email Address</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                   <Mail className="w-5 h-5" />
                 </div>
                 <input
@@ -114,18 +99,18 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-gray-400"
+                  className="horizon-input !pl-14"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
-                <Link href="#" className="text-xs font-bold text-indigo-600 hover:text-indigo-500 transition-colors">Forgot password?</Link>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Password</label>
+                <Link href="#" className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Forgot password?</Link>
               </div>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                   <Lock className="w-5 h-5" />
                 </div>
                 <input
@@ -134,7 +119,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-gray-400"
+                  className="horizon-input !pl-14"
                 />
               </div>
             </div>
@@ -142,42 +127,37 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+              className="horizon-btn-primary w-full h-16 text-sm uppercase tracking-widest mt-4"
             >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  Login
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
+              {isLoading ? 'Processing...' : 'Sign In'}
+              {!isLoading && <ArrowRight className="w-5 h-5 ml-1" />}
             </button>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-gray-400 font-bold tracking-widest">Or</span></div>
-            </div>
-
-            <div className="flex justify-center">
-              <GoogleLogin onSuccess={handleGoogleSuccess} theme="outline" shape="pill" />
-            </div>
           </form>
 
-          <div className="mt-8 text-center border-t border-gray-50 pt-8">
-            <p className="text-gray-500 text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/register" className="text-indigo-600 font-bold hover:text-indigo-500 transition-colors underline-offset-4 hover:underline">
-                Create Account
-              </Link>
-            </p>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+            <div className="relative flex justify-center text-[10px] font-black uppercase tracking-[0.2em]"><span className="bg-white px-4 text-slate-400 font-black">Secure Authentication</span></div>
           </div>
+
+          <button 
+            onClick={() => googleLogin()}
+            disabled={isLoading}
+            className="w-full h-16 bg-white border border-slate-200 rounded-3xl flex items-center justify-center gap-4 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition-all shadow-sm group disabled:opacity-50"
+          >
+            <svg className="w-6 h-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5.04c1.94 0 3.51.68 4.79 1.97l3.58-3.58C18.16 1.28 15.3 0 12 0 7.31 0 3.25 2.69 1.19 6.6L5.3 9.8c1-3.02 3.8-5.24 6.7-5.24z"/>
+              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.7 2.88c2.16-1.99 3.42-4.93 3.42-8.7z"/>
+              <path fill="#34A853" d="M5.3 14.2c-.26-.79-.41-1.63-.41-2.5s.15-1.71.41-2.5L1.19 6.6C.43 8.22 0 10.06 0 12s.43 3.78 1.19 5.4l4.11-3.2z"/>
+              <path fill="#FBBC05" d="M12 18.96c-2.9 0-5.7-2.22-6.7-5.24l-4.11 3.2C3.25 21.31 7.31 24 12 24c3.3 0 6.07-1.07 8.08-2.9l-3.7-2.88c-1.12.74-2.54 1.14-4.38 1.14z"/>
+            </svg>
+            <span className="text-sm font-black text-slate-700 tracking-tight">Continue with Google</span>
+          </button>
         </div>
-        
-        <div className="mt-8 flex justify-center gap-6">
-          <Link href="/" className="text-xs text-gray-500 hover:text-gray-400 transition-colors">Privacy Policy</Link>
-          <Link href="/" className="text-xs text-gray-500 hover:text-gray-400 transition-colors">Terms of Service</Link>
-        </div>
+
+        <p className="mt-10 text-center text-slate-500 font-bold text-sm">
+          New to Ascentia?{' '}
+          <Link href="/register" className="text-primary hover:underline underline-offset-4 decoration-2">Create Account</Link>
+        </p>
       </motion.div>
     </div>
   );

@@ -4,8 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
+import { Mail, Lock, User, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function RegisterPage() {
@@ -13,23 +12,33 @@ export default function RegisterPage() {
   const setUser = useAuthStore((state) => state.setUser);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/auth/register', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        }),
       });
 
       const data = await response.json();
@@ -38,132 +47,127 @@ export default function RegisterPage() {
       setUser(data);
       router.push('/');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Something went wrong');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/v1/auth/google-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken: credentialResponse.credential }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setUser(data);
-        router.push('/');
-      }
-    } catch (err) {
-      setError('Google login failed');
-    }
-  };
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6 relative overflow-hidden">
-      {/* Background accents */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full"></div>
-        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full"></div>
-      </div>
+    <div className="min-h-screen w-full flex items-center justify-center p-6 bg-white relative">
+      {/* Background blobs removed for maximum text clarity */}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md z-10"
+        className="w-full max-w-[520px]"
       >
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-600 mb-4 shadow-lg shadow-indigo-600/20">
-            <ShieldCheck className="w-6 h-6 text-white" />
+        <div className="text-center mb-10 space-y-3">
+          <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-600/20 -rotate-3">
+            <ShieldCheck className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Create your account</h1>
-          <p className="text-gray-500 mt-2 text-sm">Join Ascentia and start planning your future</p>
+          <h1 className="text-4xl font-black text-black tracking-tighter">Join Ascentia</h1>
+          <p className="text-slate-700 font-bold tracking-tight">Secure your financial future starting today</p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl shadow-gray-200/50 relative">
+        <div className="horizon-card p-10 bg-gradient-surface space-y-8">
           {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-red-600 text-xs font-medium">
-              <AlertCircle className="w-4 h-4" /> {error}
+            <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-red-600 shadow-glow" />
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name</label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
-                  <User className="w-4 h-4" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                  <User className="w-5 h-5" />
                 </div>
                 <input
                   required
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="John Doe"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                  className="horizon-input !pl-14"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Email Address</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Mail className="w-4 h-4" />
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                  <Mail className="w-5 h-5" />
                 </div>
                 <input
                   required
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="john@example.com"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                  className="horizon-input !pl-14"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Password</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Lock className="w-4 h-4" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <input
+                    required
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="••••••••"
+                    className="horizon-input !pl-14 !py-4"
+                  />
                 </div>
-                <input
-                  required
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  placeholder="••••••••"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
-                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <input
+                    required
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    placeholder="••••••••"
+                    className="horizon-input !pl-14 !py-4"
+                  />
+                </div>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2"
+              className="horizon-btn-primary w-full h-16 text-sm uppercase tracking-widest mt-6"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? 'Creating Account...' : 'Get Started'}
+              {!isLoading && <ArrowRight className="w-5 h-5 ml-1" />}
             </button>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-gray-400 font-bold tracking-widest">Or</span></div>
-            </div>
-
-            <div className="flex justify-center">
-              <GoogleLogin onSuccess={handleGoogleSuccess} theme="outline" shape="pill" />
-            </div>
           </form>
+
+          <div className="pt-2 text-center">
+            <p className="text-[10px] font-bold text-slate-400 px-8 leading-relaxed">
+              By joining, you agree to our <span className="text-primary hover:underline cursor-pointer">Terms of Service</span> and <span className="text-primary hover:underline cursor-pointer">Security Protocol</span>.
+            </p>
+          </div>
         </div>
 
-        <p className="mt-8 text-center text-gray-500 text-sm">
-          Already have an account?{' '}
-          <Link href="/login" className="text-indigo-600 font-bold hover:text-indigo-500 transition-colors">Log In</Link>
+        <p className="mt-10 text-center text-slate-500 font-bold text-sm">
+          Already a member?{' '}
+          <Link href="/login" className="text-primary hover:underline underline-offset-4 decoration-2">Sign In</Link>
         </p>
       </motion.div>
     </div>

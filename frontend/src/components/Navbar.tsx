@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Activity } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function Navbar() {
@@ -20,72 +19,86 @@ export function Navbar() {
     router.push('/login');
   };
 
-  return (
-    <nav className="sticky top-0 z-[100] w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        {user ? (
-          <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:-translate-y-0.5 transition-transform">
-              <Image src="/logo.png" alt="Ascentia Logo" width={40} height={40} className="object-contain" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">Ascentia</span>
-          </Link>
-        ) : (
-          <div className="flex items-center gap-2 flex-shrink-0 cursor-default">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center">
-              <Image src="/logo.png" alt="Ascentia Logo" width={40} height={40} className="object-contain" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">Ascentia</span>
-          </div>
-        )}
+  const navLinks = [
+    { href: '/savings', label: 'Savings' },
+    { href: '/house', label: 'House' },
+    { href: '/loan', label: 'Loan' },
+    { href: '/emi', label: 'EMI' },
+    { href: '/sip', label: 'SIP' },
+    { href: '/mutual-funds', label: 'Mutual Funds' },
+  ];
 
-        {user && !isAuthPage && (
-          <div className="hidden md:flex items-center gap-6 ml-8 flex-1">
-            <Link href="/savings" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Savings</Link>
-            <Link href="/house-payment" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">House</Link>
-            <Link href="/loan" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Loan</Link>
-            <Link href="/emi" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Quick EMI</Link>
-            <Link href="/sip" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">SIP</Link>
-            <Link href="/mutual-funds" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">Mutual Funds</Link>
-          </div>
-        )}
+  return (
+    <nav className="h-20 bg-white/70 backdrop-blur-xl border-b border-white/40 sticky top-0 z-[100] transition-all">
+      <div className="max-w-[1440px] mx-auto px-8 h-full flex items-center justify-between">
+        <div className="flex items-center gap-12">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 bg-gradient-primary rounded-[14px] flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
+              <span className="text-white font-black text-2xl italic leading-none">A</span>
+            </div>
+            <div className="flex flex-col -gap-1">
+              <span className="text-xl font-black text-slate-900 tracking-tighter leading-none">ASCENTIA</span>
+              <span className="text-[10px] font-black text-primary tracking-[0.2em] opacity-80">FINANCE</span>
+            </div>
+          </Link>
+
+          {user && !isAuthPage && (
+            <div className="hidden lg:flex items-center gap-1 bg-slate-100/50 p-1.5 rounded-[18px] border border-slate-200/50">
+              {navLinks.map((link) => (
+                <Link 
+                  key={link.href}
+                  href={link.href} 
+                  className={`relative px-5 py-2 text-xs font-black tracking-wide rounded-[12px] transition-all duration-300 ${
+                    pathname === link.href 
+                      ? 'text-primary' 
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  {pathname === link.href && (
+                    <motion.div 
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-white shadow-sm rounded-[12px] -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-6">
           {!isAuthPage && (
             <>
               {user ? (
                 <div className="flex items-center gap-4">
-                  <Link href="/profile" className="flex items-center gap-2 bg-gray-50 border border-gray-200 hover:border-indigo-300 hover:bg-white rounded-full pl-1.5 pr-4 py-1.5 shadow-sm transition-all group">
+                  <Link href="/profile" className="flex items-center gap-3 bg-white/50 border border-slate-200 hover:border-primary/30 hover:bg-white rounded-2xl pl-1.5 pr-5 py-1.5 shadow-sm transition-all group">
                     {user.picture ? (
-                      <img src={user.picture} alt={user.name} className="w-6 h-6 rounded-full border border-gray-200" />
+                      <img src={user.picture} alt={user.name} className="w-9 h-9 rounded-xl border border-slate-200 object-cover" />
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center border border-indigo-500/30">
-                        <User className="w-3 h-3 text-white" />
+                      <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center border border-primary/20">
+                        <User className="w-4 h-4 text-white" />
                       </div>
                     )}
-                    <span className="text-xs font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">{user.name}</span>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">Account</span>
+                      <span className="text-xs font-black text-slate-900 group-hover:text-primary transition-colors">{user.name}</span>
+                    </div>
                   </Link>
                   
                   <button 
                     onClick={handleLogout}
-                    className="text-gray-400 hover:text-red-500 transition-colors flex items-center gap-2 text-sm font-medium"
+                    className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
+                    title="Logout"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span className="hidden sm:inline">Logout</span>
+                    <LogOut className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
-                  <Link href="/login" className="text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors">
-                    Log in
-                  </Link>
-                  <Link 
-                    href="/register" 
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all"
-                  >
-                    Get Started
-                  </Link>
-                </div>
+                <Link href="/login" className="horizon-btn-primary !py-2.5 !px-6 !text-xs !rounded-xl">
+                  Sign In
+                </Link>
               )}
             </>
           )}

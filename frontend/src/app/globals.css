@@ -1,14 +1,11 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #F9FAFB;
-  --foreground: #111827;
-  --card: #FFFFFF;
+  --background: #F8FAFC;
+  --foreground: #0F172A;
   --primary: #6366F1;
-  --accent: #4F46E5;
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --border: #E2E8F0;
 }
 
 body {
@@ -16,35 +13,76 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Premium Background Blobs */
+body::before {
+  content: "";
+  position: fixed;
+  top: -10%;
+  right: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 @layer components {
-  .ascentia-card {
-    @apply bg-white border border-gray-200 rounded-2xl shadow-sm;
+  .horizon-card {
+    @apply bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-3xl shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:-translate-y-1;
+  }
+
+  .horizon-btn-primary {
+    @apply bg-gradient-primary text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2;
+  }
+
+  .horizon-btn-secondary {
+    @apply bg-white border border-slate-200 text-slate-600 font-bold px-6 py-3 rounded-2xl hover:bg-slate-50 hover:border-primary/30 hover:text-primary transition-all flex items-center justify-center gap-2;
+  }
+
+  .horizon-input {
+    @apply w-full bg-slate-50/50 border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 rounded-2xl px-5 py-4 text-slate-900 font-bold transition-all outline-none placeholder:text-slate-400;
+  }
+
+  .glass-card {
+    @apply bg-white/40 backdrop-blur-md border border-white/40 rounded-4xl shadow-2xl;
   }
 }
 
-/* Custom scrollbar for fintech look */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
 }
 
-/* Remove number input arrows (spin buttons) */
+/* Number input fixes */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 input[type=number] {
   -moz-appearance: textfield;
 }

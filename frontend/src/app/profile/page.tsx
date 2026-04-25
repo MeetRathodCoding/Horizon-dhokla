@@ -2,12 +2,10 @@
 
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSimulationStore } from '@/store/useSimulationStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, 
   Mail, 
   Target, 
   Wallet, 
@@ -17,20 +15,23 @@ import {
   LogOut, 
   ArrowLeft,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Zap,
+  Activity
 } from 'lucide-react';
 import Link from 'next/link';
+import ProfileAvatar from '@/components/Profile/ProfileAvatar';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, setUser, logout } = useAuthStore();
+  const { user, updateUser, logout } = useAuthStore();
   const { initialNetWorth, monthlySavings, milestones, setMonthlySavings } = useSimulationStore();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedName, setEditedName] = useState(user?.name || '');
 
   const handleSaveProfile = () => {
     if (user) {
-      setUser({ ...user, name: editedName });
+      updateUser({ name: editedName });
       setIsEditingProfile(false);
     }
   };
@@ -45,182 +46,200 @@ export default function ProfilePage() {
     return null;
   }
 
-  const achievedGoals = milestones.filter(m => m.age <= 30).length; // Mock logic for achieved
+  const achievedGoals = milestones.filter(m => m.age <= 30).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Top Navigation */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors font-bold text-sm">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Simulator
+    <div className="min-h-screen pb-24">
+      {/* Background blobs for depth */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+        <div className="absolute top-[10%] right-[15%] w-[400px] h-[400px] bg-indigo-500/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-blue-500/5 blur-[150px] rounded-full" />
+      </div>
+
+      <header className="h-20 flex items-center bg-white/50 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200/60">
+        <div className="max-w-6xl mx-auto w-full px-8 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all font-black text-xs uppercase tracking-widest group">
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            Back to Simulation
           </Link>
-          <button 
-            onClick={() => { logout(); router.push('/login'); }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-xs font-bold"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+             <div className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-emerald-100">
+               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-glow" />
+               Verified Account
+             </div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 pt-10 space-y-8">
-        {/* 1. TOP SECTION: User Identity Card */}
-        <section className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
-          
-          <div className="relative">
-            {user.picture ? (
-              <img src={user.picture} alt={user.name} className="w-24 h-24 rounded-full border-4 border-indigo-50 shadow-xl" />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-indigo-600 flex items-center justify-center border-4 border-indigo-50 shadow-xl">
-                <User className="w-10 h-10 text-white" />
-              </div>
-            )}
-            <div className="absolute -bottom-1 -right-1 bg-green-500 border-4 border-white w-7 h-7 rounded-full flex items-center justify-center">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-            </div>
-          </div>
+      <main className="max-w-6xl mx-auto px-8 pt-16 space-y-12">
+        {/* Profile Card Overlay */}
+        <section className="relative">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="horizon-card p-12 bg-gradient-surface relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+            
+            <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+              <ProfileAvatar />
 
-          <div className="text-center md:text-left flex-1">
-            {isEditingProfile ? (
-              <div className="space-y-3">
-                <input 
-                  type="text" 
-                  value={editedName} 
-                  onChange={(e) => setEditedName(e.target.value)} 
-                  className="w-full md:w-auto text-2xl font-extrabold text-gray-900 border-b-2 border-indigo-500 bg-transparent outline-none focus:border-indigo-600 px-1 py-1"
-                  autoFocus
-                />
-                <div className="flex items-center gap-2 justify-center md:justify-start">
-                  <button 
-                    onClick={handleSaveProfile}
-                    className="px-4 py-1.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition"
-                  >
-                    Save
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setEditedName(user?.name || '');
-                      setIsEditingProfile(false);
-                    }}
-                    className="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-300 transition"
-                  >
-                    Cancel
-                  </button>
+              <div className="text-center md:text-left flex-1 space-y-6">
+                <div>
+                  {isEditingProfile ? (
+                    <div className="flex flex-col md:flex-row items-center gap-4">
+                      <input 
+                        type="text" 
+                        value={editedName} 
+                        onChange={(e) => setEditedName(e.target.value)} 
+                        className="text-4xl font-black text-slate-900 bg-transparent border-b-4 border-primary outline-none px-2 py-1 max-w-sm"
+                        autoFocus
+                      />
+                      <div className="flex items-center gap-2">
+                        <button onClick={handleSaveProfile} className="horizon-btn-primary !py-2 !px-6 !text-xs !rounded-full">Save</button>
+                        <button onClick={() => setIsEditingProfile(false)} className="horizon-btn-secondary !py-2 !px-6 !text-xs !rounded-full">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <h1 className="text-5xl font-black text-slate-900 tracking-tighter">{user.name}</h1>
+                  )}
+                  <div className="flex items-center justify-center md:justify-start gap-2.5 mt-3 text-slate-500">
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-bold tracking-tight">{user.email}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                  <div className="px-5 py-2 bg-primary/5 border border-primary/10 text-primary font-black text-xs uppercase tracking-[0.1em] rounded-full">
+                    “Planning your future with clarity”
+                  </div>
+                  <div className="px-5 py-2 bg-amber-50 border border-amber-100 text-amber-600 font-black text-xs uppercase tracking-[0.1em] rounded-full flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5" />
+                    Pro Planner
+                  </div>
                 </div>
               </div>
-            ) : (
-              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{user.name}</h1>
-            )}
-            <div className="flex items-center justify-center md:justify-start gap-2 mt-2 text-gray-500">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm font-medium">{user.email}</span>
             </div>
-            <p className="mt-4 text-indigo-600 font-bold text-sm bg-indigo-50 inline-block px-4 py-1.5 rounded-full">
-              “Planning your future with clarity”
-            </p>
-          </div>
+          </motion.div>
         </section>
 
-        {/* 2. QUICK STATS */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Stats Grid */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: 'Monthly Savings', value: `₹${monthlySavings.toLocaleString()}`, icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-            { label: 'Net Worth', value: `₹${initialNetWorth.toLocaleString()}`, icon: Wallet, color: 'text-green-600', bg: 'bg-green-50' },
-            { label: 'Milestones', value: milestones.length, icon: Target, color: 'text-amber-600', bg: 'bg-amber-50' },
-            { label: 'Achieved', value: achievedGoals, icon: CheckCircle2, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Growth Vector', value: `₹${monthlySavings.toLocaleString()}`, icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50/50', border: 'border-indigo-100' },
+            { label: 'Current Equity', value: `₹${initialNetWorth.toLocaleString()}`, icon: Wallet, color: 'text-emerald-600', bg: 'bg-emerald-50/50', border: 'border-emerald-100' },
+            { label: 'Life Goals', value: milestones.length, icon: Target, color: 'text-amber-600', bg: 'bg-amber-50/50', border: 'border-amber-100' },
+            { label: 'Success Rate', value: '88%', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50/50', border: 'border-blue-100' },
           ].map((stat, i) => (
-            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-3">
-              <div className={`${stat.bg} ${stat.color} w-10 h-10 rounded-xl flex items-center justify-center`}>
-                <stat.icon className="w-5 h-5" />
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.05 }}
+              className={`bg-white p-7 rounded-4xl border ${stat.border} shadow-premium flex flex-col gap-6 group hover:border-primary/30 transition-all`}
+            >
+              <div className={`${stat.bg} ${stat.color} w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6`}>
+                <stat.icon className="w-7 h-7" />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stat.label}</p>
-                <p className="text-lg font-extrabold text-gray-900 mt-0.5">{stat.value}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5">{stat.label}</p>
+                <p className="text-2xl font-black text-slate-900 tracking-tight">{stat.value}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-          {/* 3. MILESTONE SUMMARY (Left Column) */}
-          <section className="md:col-span-3 space-y-4">
-            <div className="flex items-center justify-between px-2">
-              <h2 className="text-lg font-bold text-gray-800">Upcoming Milestones</h2>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{milestones.length} TOTAL</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Milestone Feed */}
+          <section className="lg:col-span-7 space-y-6">
+            <div className="flex items-center justify-between px-4">
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Timeline Events</h2>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">{milestones.length} ITEMS</span>
             </div>
             
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-              {milestones.length > 0 ? milestones.map((m, i) => (
-                <div key={i} className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between hover:border-indigo-200 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center font-bold text-indigo-600 text-sm group-hover:bg-indigo-50 transition-colors">
+            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar pb-10">
+              {milestones.map((m, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white p-6 rounded-[32px] border border-slate-200/60 shadow-sm flex items-center justify-between hover:border-primary/40 hover:shadow-premium transition-all group"
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center font-black text-primary text-lg group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
                       {m.age}
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-gray-900">{m.label}</h4>
-                      <p className="text-xs font-bold text-indigo-500 mt-0.5">₹{(m.cost / 100000).toFixed(1)}L</p>
+                      <h4 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors">{m.label}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{m.category}</span>
+                        <div className="w-1 h-1 rounded-full bg-slate-300" />
+                        <span className="text-sm font-black text-emerald-600">₹{(m.cost / 100000).toFixed(1)}L</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-tighter ${m.age < 50 ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}`}>
-                      {m.age < 50 ? '🟢 On Track' : '🟡 At Risk'}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors" />
+                  <div className="bg-slate-50 group-hover:bg-primary/5 p-3 rounded-full transition-colors">
+                    <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary transition-all group-hover:translate-x-1" />
                   </div>
-                </div>
-              )) : (
-                <div className="text-center py-10 bg-gray-100/50 rounded-3xl border border-dashed border-gray-300">
-                  <p className="text-gray-400 text-sm font-medium">No milestones added yet</p>
-                </div>
-              )}
+                </motion.div>
+              ))}
             </div>
           </section>
 
-          {/* 4. SETTINGS SECTION (Right Column) */}
-          <section className="md:col-span-2 space-y-4">
-            <h2 className="text-lg font-bold text-gray-800 px-2">Quick Settings</h2>
-            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-6">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Daily Savings Rate (₹)</label>
-                <input 
-                  type="number"
-                  value={monthlySavings}
-                  onChange={(e) => setMonthlySavings(Number(e.target.value))}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-900 outline-none focus:border-indigo-500 transition-all"
-                />
+          {/* Quick Controls */}
+          <section className="lg:col-span-5 space-y-6">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight px-4">Workspace Settings</h2>
+            <div className="horizon-card p-10 bg-gradient-surface space-y-8">
+              <div className="space-y-3">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Simulation Savings Rate (₹)</label>
+                <div className="relative group">
+                   <input 
+                    type="number"
+                    value={monthlySavings}
+                    onChange={(e) => setMonthlySavings(Number(e.target.value))}
+                    className="horizon-input !bg-white group-hover:shadow-glow transition-all"
+                  />
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+                </div>
               </div>
 
-              <div className="space-y-3 pt-2">
+              <div className="grid grid-cols-1 gap-3 pt-4">
                 <button 
                   onClick={() => setIsEditingProfile(true)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                  className="w-full flex items-center justify-between p-5 rounded-3xl bg-slate-50 hover:bg-white border border-transparent hover:border-primary/20 transition-all group"
                 >
-                  <div className="flex items-center gap-3">
-                    <Settings className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />
-                    <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">Edit Profile</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                      <Settings className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black text-slate-700 group-hover:text-slate-900">Personal Preferences</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />
-                    <span className="text-sm font-bold text-gray-600 group-hover:text-gray-900 transition-colors">Security</span>
+                
+                <button className="w-full flex items-center justify-between p-5 rounded-3xl bg-slate-50 hover:bg-white border border-transparent hover:border-primary/20 transition-all group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black text-slate-700 group-hover:text-slate-900">Privacy & Security</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button 
                   onClick={() => { logout(); router.push('/login'); }}
-                  className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm"
+                  className="w-full bg-red-50 hover:bg-red-500 hover:text-white text-red-600 font-black py-5 rounded-[28px] transition-all duration-300 flex items-center justify-center gap-3 text-xs uppercase tracking-widest shadow-lg shadow-red-500/5 hover:shadow-red-500/20 active:scale-[0.98]"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Logout from Account
+                  <LogOut className="w-5 h-5" />
+                  Terminate Session
                 </button>
               </div>
             </div>

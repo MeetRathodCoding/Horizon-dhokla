@@ -1,86 +1,72 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface CalculatorState {
+  // Savings
   savings: {
-    monthlySavings: number;
-    initialBalance: number;
-    expectedReturnRate: number;
-    durationYears: number;
+    initial: number;
+    monthly: number;
+    rate: number;
+    years: number;
   };
+  // House
   house: {
-    propertyPrice: number;
+    price: number;
     downPayment: number;
-    loanRate: number;
-    tenureYears: number;
+    rate: number;
+    years: number;
   };
+  // Loan
   loan: {
-    loanAmount: number;
-    loanRate: number;
-    tenureYears: number;
+    amount: number;
+    rate: number;
+    years: number;
   };
-  sip: {
-    monthlyInvestment: number;
-    returnRate: number;
-    durationYears: number;
-  };
-  mutualFund: {
-    lumpSum: number;
-    sipAmount: number;
-    returnRate: number;
-    durationYears: number;
-  };
+  // EMI
   emi: {
     amount: number;
     rate: number;
-    months: number;
+    years: number;
   };
-  setSavingsInput: (field: keyof CalculatorState['savings'], value: number) => void;
-  setHouseInput: (field: keyof CalculatorState['house'], value: number) => void;
-  setLoanInput: (field: keyof CalculatorState['loan'], value: number) => void;
-  setSIPInput: (field: keyof CalculatorState['sip'], value: number) => void;
-  setMutualFundInput: (field: keyof CalculatorState['mutualFund'], value: number) => void;
-  setEMIInput: (field: keyof CalculatorState['emi'], value: number) => void;
+  // SIP
+  sip: {
+    monthly: number;
+    rate: number;
+    years: number;
+  };
+  // Mutual Funds
+  mutualFunds: {
+    lumpSum: number;
+    rate: number;
+    years: number;
+  };
+  
+  // Actions
+  updateSavings: (data: Partial<CalculatorState['savings']>) => void;
+  updateHouse: (data: Partial<CalculatorState['house']>) => void;
+  updateLoan: (data: Partial<CalculatorState['loan']>) => void;
+  updateEmi: (data: Partial<CalculatorState['emi']>) => void;
+  updateSip: (data: Partial<CalculatorState['sip']>) => void;
+  updateMutualFunds: (data: Partial<CalculatorState['mutualFunds']>) => void;
 }
 
-export const useCalculatorStore = create<CalculatorState>((set) => ({
-  savings: {
-    monthlySavings: 10000,
-    initialBalance: 0,
-    expectedReturnRate: 12,
-    durationYears: 10,
-  },
-  house: {
-    propertyPrice: 5000000,
-    downPayment: 1000000,
-    loanRate: 8.5,
-    tenureYears: 20,
-  },
-  loan: {
-    loanAmount: 1000000,
-    loanRate: 10.5,
-    tenureYears: 5,
-  },
-  sip: {
-    monthlyInvestment: 5000,
-    returnRate: 12,
-    durationYears: 15,
-  },
-  mutualFund: {
-    lumpSum: 50000,
-    sipAmount: 2000,
-    returnRate: 12,
-    durationYears: 10,
-  },
-  emi: {
-    amount: 500000,
-    rate: 9,
-    months: 60,
-  },
-  
-  setSavingsInput: (field, value) => set((state) => ({ savings: { ...state.savings, [field]: value } })),
-  setHouseInput: (field, value) => set((state) => ({ house: { ...state.house, [field]: value } })),
-  setLoanInput: (field, value) => set((state) => ({ loan: { ...state.loan, [field]: value } })),
-  setSIPInput: (field, value) => set((state) => ({ sip: { ...state.sip, [field]: value } })),
-  setMutualFundInput: (field, value) => set((state) => ({ mutualFund: { ...state.mutualFund, [field]: value } })),
-  setEMIInput: (field, value) => set((state) => ({ emi: { ...state.emi, [field]: value } })),
-}));
+export const useCalculatorStore = create<CalculatorState>()(
+  persist(
+    (set) => ({
+      savings: { initial: 100000, monthly: 10000, rate: 7, years: 10 },
+      house: { price: 5000000, downPayment: 1000000, rate: 8.5, years: 20 },
+      loan: { amount: 1000000, rate: 10, years: 5 },
+      emi: { amount: 1000000, rate: 9.5, years: 3 },
+      sip: { monthly: 5000, rate: 12, years: 10 },
+      mutualFunds: { lumpSum: 100000, rate: 15, years: 5 },
+
+      updateSavings: (data) => set((state) => ({ savings: { ...state.savings, ...data } })),
+      updateHouse: (data) => set((state) => ({ house: { ...state.house, ...data } })),
+      updateLoan: (data) => set((state) => ({ loan: { ...state.loan, ...data } })),
+      updateEmi: (data) => set((state) => ({ emi: { ...state.emi, ...data } })),
+      updateSip: (data) => set((state) => ({ sip: { ...state.sip, ...data } })),
+      updateMutualFunds: (data) => set((state) => ({ mutualFunds: { ...state.mutualFunds, ...data } })),
+    }),
+    { name: 'ascentia-calculators' }
+  )
+);

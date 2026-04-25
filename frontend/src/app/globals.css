@@ -1,21 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a; /* slate-900 */
-  --foreground: #f8fafc; /* slate-50 */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --primary: #6366F1;
+  --accent: #22C55E;
+  --warning: #F59E0B;
+  --border: #E2E8F0;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
   overflow-x: hidden;
 }
 
-@layer utilities {
+@layer components {
   .horizon-card {
-    @apply bg-slate-800 border border-slate-700 shadow-xl rounded-xl;
+    @apply bg-white border border-slate-200 rounded-2xl shadow-sm;
   }
+}
+
+/* Custom scrollbar for fintech look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+}
+
+/* Remove number input arrows (spin buttons) */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }

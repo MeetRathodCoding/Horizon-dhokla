@@ -3,41 +3,54 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.SMTP_USER || 'your-email@gmail.com',
-    pass: process.env.SMTP_PASS || 'your-app-password',
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
 const sendOTP = async (req, res) => {
   const { email } = req.body;
+  
+  // Check if credentials are still placeholders
+  if (!process.env.SMTP_USER || process.env.SMTP_USER === 'your-email@gmail.com') {
+    return res.status(400).json({ 
+      message: 'SMTP credentials not configured. Please update your backend/.env file with a real Gmail address and App Password.' 
+    });
+  }
+
   try {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     
     // Save OTP to DB
-    await OTP.deleteMany({ email }); // Clear previous
+    await OTP.deleteMany({ email }); 
     await OTP.create({ email, otp: otpCode });
 
-    // Send Email
+    // Send Real Email via Gmail
     const mailOptions = {
-      from: process.env.SMTP_USER,
+      from: `"Horizon Auth" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Your Horizon Verification Code',
+      subject: `Your Verification Code: ${otpCode}`,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-          <h2>Verify your account</h2>
-          <p>Use the following code to complete your registration:</p>
-          <h1 style="color: #6d28d9; letter-spacing: 5px;">${otpCode}</h1>
-          <p>This code expires in 5 minutes.</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #0f172a; color: #f8fafc; border-radius: 16px; max-width: 500px; margin: auto; border: 1px solid #1e293b;">
+          <h2 style="color: #8b5cf6; margin-bottom: 20px; font-size: 24px;">Verify your Email</h2>
+          <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">Welcome to Horizon! Use the verification code below to complete your registration. It will expire in 5 minutes.</p>
+          <div style="background-color: #1e293b; padding: 24px; border-radius: 12px; text-align: center; margin: 30px 0; border: 1px solid #334155;">
+            <h1 style="color: #ffffff; letter-spacing: 8px; font-size: 36px; margin: 0;">${otpCode}</h1>
+          </div>
+          <p style="color: #64748b; font-size: 12px;">If you didn't request this, you can safely ignore this email.</p>
         </div>
       `,
     };
 
     await transporter.sendMail(mailOptions);
-    res.json({ message: 'OTP sent successfully' });
+    res.json({ message: 'OTP sent successfully to your Gmail' });
   } catch (error) {
-    console.error('Email error:', error);
-    res.status(500).json({ message: 'Failed to send OTP. Check SMTP settings.' });
+    console.error('Nodemailer Error:', error);
+    res.status(500).json({ message: 'Email service error. Ensure you use a Gmail "App Password", not your regular password.' });
   }
 };
 

@@ -64,7 +64,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-6 relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6 relative overflow-hidden">
       {/* Background accents */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full"></div>
@@ -85,11 +85,11 @@ export default function LoginPage() {
           >
             <Lock className="w-8 h-8 text-white" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
-          <p className="text-slate-500 mt-2 text-sm">Enter your credentials to access your account</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
+          <p className="text-gray-500 mt-2 text-sm">Enter your credentials to access your account</p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50 relative">
+        <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl shadow-gray-200/50 relative">
           {error && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -103,9 +103,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email Address</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Email Address</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-gray-400">
                   <Mail className="w-5 h-5" />
                 </div>
                 <input
@@ -114,18 +114,18 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-gray-400"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
                 <Link href="#" className="text-xs font-bold text-indigo-600 hover:text-indigo-500 transition-colors">Forgot password?</Link>
               </div>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-gray-400">
                   <Lock className="w-5 h-5" />
                 </div>
                 <input
@@ -134,7 +134,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -155,8 +155,8 @@ export default function LoginPage() {
             </button>
 
             <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-slate-400 font-bold tracking-widest">Or</span></div>
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
+              <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-3 text-gray-400 font-bold tracking-widest">Or</span></div>
             </div>
 
             <div className="flex justify-center">
@@ -164,8 +164,8 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <div className="mt-8 text-center border-t border-slate-50 pt-8">
-            <p className="text-slate-500 text-sm">
+          <div className="mt-8 text-center border-t border-gray-50 pt-8">
+            <p className="text-gray-500 text-sm">
               Don&apos;t have an account?{' '}
               <Link href="/register" className="text-indigo-600 font-bold hover:text-indigo-500 transition-colors underline-offset-4 hover:underline">
                 Create Account
@@ -175,8 +175,8 @@ export default function LoginPage() {
         </div>
         
         <div className="mt-8 flex justify-center gap-6">
-          <Link href="/" className="text-xs text-slate-500 hover:text-slate-400 transition-colors">Privacy Policy</Link>
-          <Link href="/" className="text-xs text-slate-500 hover:text-slate-400 transition-colors">Terms of Service</Link>
+          <Link href="/" className="text-xs text-gray-500 hover:text-gray-400 transition-colors">Privacy Policy</Link>
+          <Link href="/" className="text-xs text-gray-500 hover:text-gray-400 transition-colors">Terms of Service</Link>
         </div>
       </motion.div>
     </div>

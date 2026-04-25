@@ -1,13 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #F9FAFB;
+  --foreground: #111827;
   --card: #FFFFFF;
   --primary: #6366F1;
-  --accent: #22C55E;
+  --accent: #4F46E5;
+  --success: #22C55E;
   --warning: #F59E0B;
   --border: #E2E8F0;
 }
@@ -20,8 +19,8 @@ body {
 }
 
 @layer components {
-  .horizon-card {
-    @apply bg-white border border-slate-200 rounded-2xl shadow-sm;
+  .ascentia-card {
+    @apply bg-white border border-gray-200 rounded-2xl shadow-sm;
   }
 }
 
@@ -32,11 +31,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100;
+  @apply bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
 }
 
 /* Remove number input arrows (spin buttons) */

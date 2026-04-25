@@ -1,10 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSimulationStore } from '../store/useSimulationStore';
 import { TimelineRenderer } from '../components/Timeline/TimelineRenderer';
 
 export default function Home() {
+  const router = useRouter();
   const { initialNetWorth, monthlySavings, setInitialNetWorth, setMonthlySavings } = useSimulationStore();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user) {
+      router.push('/login');
+    }
+  }, [router]);
   
   return (
     <main className="min-h-screen p-4 md:p-8 flex flex-col md:flex-row gap-6">

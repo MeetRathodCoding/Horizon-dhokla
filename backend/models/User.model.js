@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     required: true,
@@ -8,11 +12,16 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: {
     type: String,
-    required: true,
+    required: function() { return !this.googleId; }, // Only required if not a Google user
   },
-  name: {
+  googleId: {
     type: String,
-    required: true,
+    unique: true,
+    sparse: true,
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
   }
 }, { timestamps: true });
 

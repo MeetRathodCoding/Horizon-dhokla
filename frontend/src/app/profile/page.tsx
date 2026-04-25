@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useSimulationStore } from '@/store/useSimulationStore';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { 
   User, 
   Mail, 
@@ -24,8 +25,13 @@ export default function ProfilePage() {
   const { user, logout } = useAuthStore();
   const { initialNetWorth, monthlySavings, milestones, setMonthlySavings } = useSimulationStore();
 
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user) {
-    if (typeof window !== 'undefined') router.push('/login');
     return null;
   }
 

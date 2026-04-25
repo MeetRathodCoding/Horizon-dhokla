@@ -8,12 +8,21 @@ import { Home, Landmark, Calculator } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function HousePaymentPage() {
-  const { house, updateHouse } = useCalculatorStore();
+  const { house, setHouseInput } = useCalculatorStore();
 
   const results = useMemo(() => {
-    const loanAmount = house.price - house.downPayment;
-    const monthlyRate = house.rate / 100 / 12;
-    const totalMonths = house.years * 12;
+    const loanAmount = house.propertyPrice - house.downPayment;
+    const monthlyRate = house.interestRate / 100 / 12;
+    const totalMonths = house.tenure * 12;
+
+    if (monthlyRate === 0) {
+      return {
+        emi: loanAmount / totalMonths,
+        totalInterest: 0,
+        loanAmount,
+        projectionData: []
+      };
+    }
 
     const emi = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
     const totalRepayment = emi * totalMonths;
@@ -21,7 +30,7 @@ export default function HousePaymentPage() {
 
     const data = [];
     let balance = loanAmount;
-    for (let yr = 0; yr <= house.years; yr++) {
+    for (let yr = 0; yr <= house.tenure; yr++) {
       data.push({ label: `Yr ${yr}`, value: Math.max(0, Math.round(balance)) });
       for (let m = 0; m < 12; m++) {
         const interest = balance * monthlyRate;
@@ -47,28 +56,48 @@ export default function HousePaymentPage() {
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Property Price (₹)</label>
             <div className="relative group">
-              <input type="number" value={house.price} onChange={(e) => updateHouse({ price: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
+              <input 
+                type="number" 
+                value={house.propertyPrice} 
+                onChange={(e) => setHouseInput("propertyPrice", Number(e.target.value))} 
+                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+              />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Down Payment (₹)</label>
             <div className="relative group">
-              <input type="number" value={house.downPayment} onChange={(e) => updateHouse({ downPayment: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
+              <input 
+                type="number" 
+                value={house.downPayment} 
+                onChange={(e) => setHouseInput("downPayment", Number(e.target.value))} 
+                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+              />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Interest Rate (%)</label>
             <div className="relative group">
-              <input type="number" value={house.rate} onChange={(e) => updateHouse({ rate: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
+              <input 
+                type="number" 
+                value={house.interestRate} 
+                onChange={(e) => setHouseInput("interestRate", Number(e.target.value))} 
+                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+              />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">%</div>
             </div>
           </div>
           <div className="space-y-3">
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tenure (Years)</label>
             <div className="relative group">
-              <input type="number" value={house.years} onChange={(e) => updateHouse({ years: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
+              <input 
+                type="number" 
+                value={house.tenure} 
+                onChange={(e) => setHouseInput("tenure", Number(e.target.value))} 
+                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+              />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">YR</div>
             </div>
           </div>

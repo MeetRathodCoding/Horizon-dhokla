@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type HouseInput = {
+  propertyPrice: number;
+  downPayment: number;
+  interestRate: number;
+  tenure: number;
+};
+
 interface CalculatorState {
   // Savings
   savings: {
@@ -9,13 +16,10 @@ interface CalculatorState {
     rate: number;
     years: number;
   };
-  // House
-  house: {
-    price: number;
-    downPayment: number;
-    rate: number;
-    years: number;
-  };
+  
+  // House (Updated to match User's 'Correct Way')
+  house: HouseInput;
+
   // Loan
   loan: {
     amount: number;
@@ -43,7 +47,7 @@ interface CalculatorState {
   
   // Actions
   updateSavings: (data: Partial<CalculatorState['savings']>) => void;
-  updateHouse: (data: Partial<CalculatorState['house']>) => void;
+  setHouseInput: (field: keyof HouseInput, value: number) => void;
   updateLoan: (data: Partial<CalculatorState['loan']>) => void;
   updateEmi: (data: Partial<CalculatorState['emi']>) => void;
   updateSip: (data: Partial<CalculatorState['sip']>) => void;
@@ -54,14 +58,29 @@ export const useCalculatorStore = create<CalculatorState>()(
   persist(
     (set) => ({
       savings: { initial: 100000, monthly: 10000, rate: 7, years: 10 },
-      house: { price: 5000000, downPayment: 1000000, rate: 8.5, years: 20 },
+      
+      house: { 
+        propertyPrice: 5000000, 
+        downPayment: 1000000, 
+        interestRate: 8.5, 
+        tenure: 20 
+      },
+      
       loan: { amount: 1000000, rate: 10, years: 5 },
       emi: { amount: 1000000, rate: 9.5, years: 3 },
       sip: { monthly: 5000, rate: 12, years: 10 },
       mutualFunds: { lumpSum: 100000, rate: 15, years: 5 },
 
       updateSavings: (data) => set((state) => ({ savings: { ...state.savings, ...data } })),
-      updateHouse: (data) => set((state) => ({ house: { ...state.house, ...data } })),
+      
+      setHouseInput: (field, value) =>
+        set((state) => ({
+          house: {
+            ...state.house,
+            [field]: value,
+          },
+        })),
+
       updateLoan: (data) => set((state) => ({ loan: { ...state.loan, ...data } })),
       updateEmi: (data) => set((state) => ({ emi: { ...state.emi, ...data } })),
       updateSip: (data) => set((state) => ({ sip: { ...state.sip, ...data } })),

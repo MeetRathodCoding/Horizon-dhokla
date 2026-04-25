@@ -39,51 +39,51 @@ export default function SavingsPage() {
       inputs={
         <div className="space-y-8">
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Initial Balance (₹)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Initial Balance (₹)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={savings.initial} 
                 onChange={(e) => updateSavings({ initial: Number(e.target.value) })}
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all"
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all"
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Monthly Contribution (₹)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Monthly Contribution (₹)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={savings.monthly} 
                 onChange={(e) => updateSavings({ monthly: Number(e.target.value) })}
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all"
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all"
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Interest Rate (% p.a.)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Interest Rate (% p.a.)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={savings.rate} 
                 onChange={(e) => updateSavings({ rate: Number(e.target.value) })}
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all"
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all"
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">%</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">%</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Duration (Years)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Duration (Years)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={savings.years} 
                 onChange={(e) => updateSavings({ years: Number(e.target.value) })}
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all"
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all"
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">YR</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">YR</div>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function SavingsPage() {
               <TrendingUp className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Maturity Value</h3>
+              <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Maturity Value</h3>
               <p className="text-3xl font-black text-indigo-600 tracking-tight">₹{results.finalValue.toLocaleString('en-IN')}</p>
             </div>
           </motion.div>
@@ -113,8 +113,8 @@ export default function SavingsPage() {
               <Wallet className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Invested</h3>
-              <p className="text-3xl font-black text-slate-900 tracking-tight">₹{results.totalInvested.toLocaleString('en-IN')}</p>
+              <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Total Invested</h3>
+              <p className="text-3xl font-black text-black tracking-tight">₹{results.totalInvested.toLocaleString('en-IN')}</p>
             </div>
           </motion.div>
         </>

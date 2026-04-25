@@ -22,21 +22,24 @@ export default function CalculatorLayout({ title, description, inputs, results, 
       </div>
 
       <div className="max-w-[1440px] mx-auto px-8 space-y-12 pt-12">
-        <header className="flex flex-col gap-4">
-          <Link href="/" className="flex items-center gap-2.5 text-slate-500 hover:text-primary transition-all font-black text-xs uppercase tracking-widest group w-fit">
-            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+        <header className="flex flex-col gap-6 -mx-8 px-8 py-12 bg-slate-900 relative overflow-hidden rounded-b-[40px] shadow-2xl">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -mr-64 -mt-64" />
+          
+          <Link href="/" className="flex items-center gap-2.5 text-slate-400 hover:text-white transition-all font-black text-xs uppercase tracking-widest group w-fit relative z-10">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all backdrop-blur-md">
               <ChevronLeft className="w-4 h-4" />
             </div>
             Back to Dashboard
           </Link>
-          <div className="flex items-end justify-between border-b border-slate-200/60 pb-8">
+
+          <div className="flex items-end justify-between relative z-10">
             <div>
-              <h1 className="text-5xl font-black text-slate-900 tracking-tighter">{title}</h1>
-              <p className="text-slate-500 font-bold mt-2 tracking-tight max-w-2xl">{description}</p>
+              <h1 className="text-6xl font-black text-white tracking-tighter leading-none">{title}</h1>
+              <p className="text-slate-300 font-bold mt-4 tracking-tight max-w-2xl text-lg opacity-90">{description}</p>
             </div>
-            <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-sm border border-white/80 rounded-2xl shadow-premium">
-               <Info className="w-5 h-5 text-primary" />
-               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Real-time Analysis Active</span>
+            <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl">
+               <Info className="w-5 h-5 text-indigo-400" />
+               <span className="text-[10px] font-black text-white uppercase tracking-widest">Real-time Analysis Active</span>
             </div>
           </div>
         </header>
@@ -48,15 +51,15 @@ export default function CalculatorLayout({ title, description, inputs, results, 
             animate={{ opacity: 1, x: 0 }}
             className="xl:col-span-4"
           >
-            <div className="horizon-card overflow-hidden bg-white h-full">
-              <div className="bg-slate-900 p-10 relative overflow-hidden">
+            <div className="horizon-card overflow-hidden bg-slate-800 border-white/5 h-full shadow-2xl">
+              <div className="bg-slate-900 p-10 relative overflow-hidden border-b border-white/5">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-16 -mt-16" />
                 <div className="relative z-10">
                   <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-primary rounded-full"></div>
+                    <div className="w-1.5 h-6 bg-primary rounded-full shadow-glow"></div>
                     Parameters
                   </h2>
-                  <p className="text-[10px] text-indigo-200 font-black uppercase tracking-[0.2em] mt-2">Adjust Variables</p>
+                  <p className="text-[10px] text-white font-black uppercase tracking-[0.2em] mt-2">Adjust Variables</p>
                 </div>
               </div>
               <div className="p-10 space-y-10 relative z-10">

@@ -39,24 +39,24 @@ export default function SIPPage() {
       inputs={
         <div className="space-y-8">
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Monthly Investment (₹)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Monthly Investment (₹)</label>
             <div className="relative group">
-              <input type="number" value={sip.monthly} onChange={(e) => updateSip({ monthly: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+              <input type="number" value={sip.monthly} onChange={(e) => updateSip({ monthly: Number(e.target.value) })} className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" />
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Expected Return (%)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Expected Return (%)</label>
             <div className="relative group">
-              <input type="number" value={sip.rate} onChange={(e) => updateSip({ rate: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">%</div>
+              <input type="number" value={sip.rate} onChange={(e) => updateSip({ rate: Number(e.target.value) })} className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" />
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">%</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tenure (Years)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Tenure (Years)</label>
             <div className="relative group">
-              <input type="number" value={sip.years} onChange={(e) => updateSip({ years: Number(e.target.value) })} className="horizon-input !bg-white group-hover:shadow-glow transition-all" />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">YR</div>
+              <input type="number" value={sip.years} onChange={(e) => updateSip({ years: Number(e.target.value) })} className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" />
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">YR</div>
             </div>
           </div>
         </div>
@@ -77,8 +77,8 @@ export default function SIPPage() {
               <Coins className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Invested</h3>
-              <p className="text-3xl font-black text-slate-900 tracking-tight">₹{results.totalInvested.toLocaleString('en-IN')}</p>
+              <h3 className="text-[10px] font-black text-white uppercase tracking-widest mb-1.5">Total Invested</h3>
+              <p className="text-3xl font-black text-black tracking-tight">₹{results.totalInvested.toLocaleString('en-IN')}</p>
             </div>
           </motion.div>
         </>

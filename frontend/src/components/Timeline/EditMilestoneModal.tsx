@@ -37,36 +37,36 @@ export default function EditMilestoneModal({ milestone, isOpen, onClose }: EditM
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-[40px] shadow-2xl z-[201] p-10 space-y-8 overflow-hidden"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-slate-900 rounded-[40px] shadow-[0_40px_120px_rgba(0,0,0,0.5)] z-[201] p-10 space-y-8 overflow-hidden border border-white/10"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
             
             <header className="flex justify-between items-start relative z-10">
               <div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Edit Event</h2>
+                <h2 className="text-3xl font-black text-white tracking-tighter">Edit Event</h2>
                 <p className="text-xs text-primary font-black uppercase tracking-[0.2em] mt-2">Adjust your strategy</p>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                <X className="w-6 h-6 text-slate-400" />
+              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <X className="w-6 h-6 text-white/40" />
               </button>
             </header>
 
             <div className="space-y-6 relative z-10">
               <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <label className="text-[11px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
                   <Tag className="w-3.5 h-3.5" /> Event Name
                 </label>
                 <input 
                   type="text" 
                   value={label} 
                   onChange={(e) => setLabel(e.target.value)}
-                  className="horizon-input !py-4"
+                  className="horizon-input !py-4 bg-slate-800 text-white border-white/10"
                   placeholder="e.g. Dream House"
                 />
               </div>
 
               <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <label className="text-[11px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
                   <DollarSign className="w-3.5 h-3.5" /> Target Amount (₹)
                 </label>
                 <div className="relative group">
@@ -74,7 +74,7 @@ export default function EditMilestoneModal({ milestone, isOpen, onClose }: EditM
                     type="number" 
                     value={cost} 
                     onChange={(e) => setCost(Number(e.target.value))}
-                    className="horizon-input !py-4 !pl-10"
+                    className="horizon-input !py-4 !pl-10 bg-slate-800 text-white border-white/10"
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-black">₹</div>
                 </div>

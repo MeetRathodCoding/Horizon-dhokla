@@ -47,14 +47,14 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="horizon-card p-6 flex items-center gap-5 group"
+            className="horizon-card p-6 flex items-center gap-5 group bg-slate-900 border-white/5"
           >
-            <div className={`${stat.bg} ${stat.color} w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+            <div className={`bg-white/5 ${stat.color} w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
               <stat.icon className="w-7 h-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1.5">{stat.label}</p>
-              <p className="text-xl font-black text-black tracking-tight">{stat.value}</p>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none mb-1.5">{stat.label}</p>
+              <p className="text-xl font-black text-white tracking-tight">{stat.value}</p>
             </div>
           </motion.div>
         ))}
@@ -66,41 +66,41 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="horizon-card overflow-hidden bg-white"
+            className="horizon-card overflow-hidden bg-slate-900 border-white/5"
           >
             <div className="bg-slate-900 p-10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-16 -mt-16" />
               <div className="relative z-10">
                 <h2 className="text-3xl font-black text-white tracking-tighter leading-none">Scenario</h2>
-                <p className="text-xs text-indigo-200 font-black uppercase tracking-[0.2em] mt-2">Simulator Engine</p>
+                <p className="text-xs text-white font-black uppercase tracking-[0.2em] mt-2">Simulator Engine</p>
               </div>
             </div>
             
             <div className="p-10 space-y-8 relative z-10">
               <div className="space-y-3">
-                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Initial Net Worth (₹)</label>
+                <label className="block text-[11px] font-black text-white/40 uppercase tracking-widest ml-1">Initial Net Worth (₹)</label>
                 <div className="relative group">
                   <input 
                     type="number" 
                     value={initialNetWorth === 0 ? '' : initialNetWorth} 
                     onChange={(e) => setInitialNetWorth(e.target.value === '' ? 0 : Number(e.target.value))}
                     placeholder="0"
-                    className="horizon-input !py-5 text-2xl !bg-white group-hover:shadow-glow transition-all"
+                    className="horizon-input !py-5 text-2xl bg-slate-800 text-white border-white/10 group-hover:border-primary/50 transition-all"
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/20 font-black text-lg">₹</div>
                 </div>
               </div>
               <div className="space-y-3">
-                <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Monthly Savings (₹)</label>
+                <label className="block text-[11px] font-black text-white/40 uppercase tracking-widest ml-1">Monthly Savings (₹)</label>
                 <div className="relative group">
                   <input 
                     type="number" 
                     value={monthlySavings === 0 ? '' : monthlySavings} 
                     onChange={(e) => setMonthlySavings(e.target.value === '' ? 0 : Number(e.target.value))}
                     placeholder="0"
-                    className="horizon-input !py-5 text-2xl !bg-white group-hover:shadow-glow transition-all"
+                    className="horizon-input !py-5 text-2xl bg-slate-800 text-white border-white/10 group-hover:border-primary/50 transition-all"
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/20 font-black text-lg">₹</div>
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function Home() {
                     : "Action required: Your current expenses exceed your savings profile. Adjust parameters to stabilize."}
               </p>
               <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-                 <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest">Confidence Score</span>
+                 <span className="text-[10px] font-black text-white uppercase tracking-widest">Confidence Score</span>
                  <span className="text-xs font-black text-emerald-400">94%</span>
               </div>
             </div>

@@ -54,7 +54,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-6 bg-white relative">
+    <div className="min-h-screen w-full flex items-center justify-center p-6 bg-gray-950 relative">
       {/* Background blobs removed for maximum text clarity */}
 
       <motion.div
@@ -66,11 +66,11 @@ export default function RegisterPage() {
           <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-600/20 -rotate-3">
             <ShieldCheck className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-black text-black tracking-tighter">Join Ascentia</h1>
-          <p className="text-slate-700 font-bold tracking-tight">Secure your financial future starting today</p>
+          <h1 className="text-4xl font-black text-white tracking-tighter">Join Ascentia</h1>
+          <p className="text-white/60 font-bold tracking-tight">Secure your financial future starting today</p>
         </div>
 
-        <div className="horizon-card p-10 bg-gradient-surface space-y-8">
+        <div className="horizon-card p-10 bg-slate-900 border-white/5 space-y-8">
           {error && (
             <div className="bg-red-50 border border-red-100 text-red-600 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-red-600 shadow-glow" />
@@ -80,7 +80,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Full Name</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                   <User className="w-5 h-5" />
@@ -91,7 +91,7 @@ export default function RegisterPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="John Doe"
-                  className="horizon-input !pl-14"
+                  className="horizon-input !pl-14 bg-slate-800 text-white border-white/10"
                 />
               </div>
             </div>
@@ -108,14 +108,14 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="john@example.com"
-                  className="horizon-input !pl-14"
+                  className="horizon-input !pl-14 bg-slate-800 text-white border-white/10"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Password</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                     <Lock className="w-5 h-5" />
@@ -126,12 +126,12 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="••••••••"
-                    className="horizon-input !pl-14 !py-4"
+                    className="horizon-input !pl-14 !py-4 bg-slate-800 text-white border-white/10"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Confirm</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                     <CheckCircle2 className="w-5 h-5" />
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     placeholder="••••••••"
-                    className="horizon-input !pl-14 !py-4"
+                    className="horizon-input !pl-14 !py-4 bg-slate-800 text-white border-white/10"
                   />
                 </div>
               </div>

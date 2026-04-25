@@ -99,18 +99,26 @@ export default function SimpleChart({ data, color = '#6366F1', height = 400 }: S
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x).tickValues(x.domain().filter((_, i) => i % Math.ceil(data.length / 6) === 0)))
-      .attr('font-size', '11px')
+      .attr('font-size', '10px')
       .attr('font-weight', '900')
-      .attr('color', '#94A3B8')
+      .attr('color', 'rgba(255, 255, 255, 0.3)') // Pure White Low Opacity
+      .attr('class', 'uppercase tracking-widest')
       .call(g => g.select('.domain').remove())
       .call(g => g.selectAll('.tick line').remove());
 
     // Y Axis
     g.append('g')
-      .call(d3.axisLeft(y).ticks(5).tickFormat(d => `₹${(Number(d) / 100000).toFixed(0)}L`))
-      .attr('font-size', '11px')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => {
+        const val = Number(d);
+        if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
+        if (val >= 100000) return `₹${(val / 100000).toFixed(0)}L`;
+        if (val >= 1000) return `₹${(val / 1000).toFixed(0)}k`;
+        return `₹${val}`;
+      }))
+      .attr('font-size', '10px')
       .attr('font-weight', '900')
-      .attr('color', '#94A3B8')
+      .attr('color', 'rgba(255, 255, 255, 0.3)') // Pure White Low Opacity
+      .attr('class', 'uppercase tracking-widest')
       .call(g => g.select('.domain').remove())
       .call(g => g.selectAll('.tick line').remove());
 

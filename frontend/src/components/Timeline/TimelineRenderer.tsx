@@ -77,12 +77,37 @@ export function TimelineRenderer() {
   );
 
   const customSnapModifier = useMemo(() => {
-    const yearWidth = xScale(21) - xScale(20);
-    return ({ transform }: any) => ({
-      ...transform,
-      x: Math.round(transform.x / yearWidth) * yearWidth,
-    });
-  }, [xScale]);
+    return ({ transform, active }: any) => {
+      if (!active) return transform;
+      const m = milestones.find(mil => mil.id === active.id);
+      if (!m) return transform;
+
+      const currentX = xScale(m.age) + transform.x;
+      const currentAge = xScale.invert(currentX);
+      
+      // High-precision interpolation for smooth path tracking
+      const ageFloor = Math.floor(currentAge);
+      const ageCeil = Math.ceil(currentAge);
+      const r1 = results.find(r => r.age === ageFloor);
+      const r2 = results.find(r => r.age === ageCeil);
+      
+      let nwAtAge = 0;
+      if (r1 && r2 && ageFloor !== ageCeil) {
+        const t = (currentAge - ageFloor) / (ageCeil - ageFloor);
+        nwAtAge = r1.netWorth + t * (r2.netWorth - r1.netWorth);
+      } else {
+        nwAtAge = r1?.netWorth || r2?.netWorth || 0;
+      }
+
+      const targetY = yScale(nwAtAge);
+      const originalY = yScale(results.find(r => r.age === m.age)?.netWorth || 0);
+
+      return {
+        ...transform,
+        y: targetY - originalY
+      };
+    };
+  }, [xScale, yScale, milestones, results]);
 
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
@@ -163,14 +188,14 @@ export function TimelineRenderer() {
                   initial={{ opacity: 0, y: 15, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                  className="absolute left-0 mt-4 w-[380px] bg-white rounded-[40px] shadow-[0_30px_100px_rgba(0,0,0,0.15)] p-6 z-50 border border-slate-100 overflow-hidden"
+                  className="absolute left-0 mt-4 w-[380px] bg-slate-900 rounded-[40px] shadow-[0_30px_100px_rgba(0,0,0,0.4)] p-6 z-50 border border-white/10 overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16" />
                   
                   <div className="relative z-10">
                     <div className="px-3 py-2 mb-4">
-                      <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Strategy Portfolio</h4>
-                      <p className="text-sm font-black text-slate-900 mt-1">Select an event to simulate</p>
+                      <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Strategy Portfolio</h4>
+                      <p className="text-sm font-black text-white mt-1">Select an event to simulate</p>
                     </div>
 
                     <div className="grid grid-cols-1 gap-2">
@@ -185,14 +210,14 @@ export function TimelineRenderer() {
                         <button
                           key={cat.label}
                           onClick={() => handleAddMilestone(cat.label)}
-                          className="flex items-center gap-4 w-full p-4 rounded-[24px] hover:bg-slate-50 transition-all group relative border border-transparent hover:border-slate-100"
+                          className="flex items-center gap-4 w-full p-4 rounded-[24px] hover:bg-white/5 transition-all group relative border border-transparent hover:border-white/10"
                         >
                           <div className={`w-12 h-12 rounded-2xl ${cat.bg} ${cat.color} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
                             <cat.icon className="w-6 h-6" />
                           </div>
                           <div className="flex flex-col items-start">
-                            <span className="text-sm font-black text-slate-900 group-hover:text-primary transition-colors">{cat.label}</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{cat.desc}</span>
+                            <span className="text-sm font-black text-white group-hover:text-primary transition-colors">{cat.label}</span>
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-tight">{cat.desc}</span>
                           </div>
                           <ChevronRight className="w-4 h-4 text-slate-300 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </button>
@@ -284,19 +309,24 @@ export function TimelineRenderer() {
           sensors={sensors} 
           onDragStart={handleDragStart} 
           onDragEnd={handleDragEnd}
-          modifiers={[restrictToHorizontalAxis, customSnapModifier]}
+          modifiers={[customSnapModifier]}
         >
           {/* Milestone Layer - Fixed positioning to align with axis */}
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
             {milestones.map(m => {
               const xPos = xScale(m.age);
+              // Find the net worth at this specific age from results
+              const resultAtAge = results.find(r => r.age === m.age);
+              const nwAtAge = resultAtAge ? resultAtAge.netWorth : 0;
+              const yPos = yScale(nwAtAge);
+              
               const isVisible = m.age >= domain[0] && m.age <= domain[1];
               return (
                 <MilestoneNode 
                   key={m.id} 
                   milestone={m} 
                   xPos={xPos} 
-                  yPos={height - 80} 
+                  yPos={yPos} 
                   isVisible={isVisible} 
                 />
               );

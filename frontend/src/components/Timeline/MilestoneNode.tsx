@@ -49,69 +49,70 @@ export function MilestoneNode({ milestone, xPos, yPos, isVisible, isOverlay, sty
           if (!isOverlay) setIsEditOpen(true);
         }}
       >
+        {/* Card and Line container */}
         <motion.div 
-          className="flex flex-col items-center -translate-y-full"
+          className="flex flex-col items-center"
+          style={{ transform: 'translateY(-10px)' }}
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={isDragging || isOverlay ? { opacity: 1, y: 0, transition: { duration: 0 } } : { opacity: 1, y: 0 }}
         >
           <div
-            className={`relative p-5 bg-white/95 backdrop-blur-md border ${
+            className={`relative p-5 bg-slate-900/95 backdrop-blur-md border ${
               isOverlay 
-                ? 'border-primary shadow-[0_20px_50px_rgba(99,102,241,0.3)] scale-110 z-50' 
-                : 'border-slate-200/80 shadow-premium hover:border-primary/50'
-            } rounded-[24px] transition-all duration-200 w-44 group overflow-hidden`}
+                ? 'border-primary shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-110 z-50' 
+                : 'border-white/10 shadow-premium hover:border-primary/50'
+            } rounded-[24px] transition-all duration-200 w-44 group overflow-hidden -translate-y-full`}
           >
-          {/* Category accent line */}
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-primary opacity-80" />
-          
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-start">
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Category</span>
-                <span className="text-[10px] font-black text-primary px-2 py-0.5 bg-primary/5 rounded-md w-fit">
-                  {milestone.category}
-                </span>
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-primary opacity-80" />
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-0.5">Category</span>
+                  <span className="text-[10px] font-black text-primary px-2 py-0.5 bg-primary/5 rounded-md w-fit">
+                    {milestone.category}
+                  </span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-0.5">Age</span>
+                  <span className="text-sm font-black text-white leading-none">{milestone.age}</span>
+                </div>
               </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Age</span>
-                <span className="text-sm font-black text-slate-900 leading-none">{milestone.age}</span>
+
+              <button 
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  useSimulationStore.getState().removeMilestone(milestone.id);
+                }}
+                className="absolute top-2 right-2 w-6 h-6 bg-red-50 text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500 hover:text-white z-50 pointer-events-auto"
+              >
+                <span className="text-[10px] font-black">✕</span>
+              </button>
+
+              <div className="h-[1px] bg-white/10 w-full" />
+
+              <div>
+                <span className="text-[9px] font-black text-white/40 uppercase tracking-widest block mb-1">Target Event</span>
+                <strong className="block font-black truncate text-white text-[13px] tracking-tight group-hover:text-primary transition-colors">
+                  {milestone.label}
+                </strong>
               </div>
-            </div>
 
-            <button 
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                useSimulationStore.getState().removeMilestone(milestone.id);
-              }}
-              className="absolute top-2 right-2 w-6 h-6 bg-red-50 text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500 hover:text-white z-50 pointer-events-auto"
-            >
-              <span className="text-[10px] font-black">✕</span>
-            </button>
-
-            <div className="h-[1px] bg-slate-100 w-full" />
-
-            <div>
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Target Event</span>
-              <strong className="block font-black truncate text-slate-900 text-[13px] tracking-tight group-hover:text-primary transition-colors">
-                {milestone.label}
-              </strong>
-            </div>
-
-            <div className="flex items-center gap-2 mt-0.5 bg-slate-50 p-2 rounded-xl border border-slate-100">
-               <span className="text-xs font-black text-primary">₹{(milestone.cost / 1000).toFixed(0)}k</span>
-               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">REQUIRED</span>
+              <div className="flex items-center gap-2 mt-0.5 bg-white/5 p-2 rounded-xl border border-white/5">
+                 <span className="text-xs font-black text-primary">₹{(milestone.cost / 1000).toFixed(0)}k</span>
+                 <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">REQUIRED</span>
+              </div>
             </div>
           </div>
-        </div>
+          
+          <div className="w-0.5 h-10 bg-gradient-to-b from-slate-200 via-slate-200/50 to-transparent -translate-y-full" />
+        </motion.div>
 
-        {/* Improved Anchor Line & Dot */}
-        <div className={`w-0.5 h-20 bg-gradient-to-b from-slate-200 via-slate-200/50 to-transparent mt-1 transition-opacity ${isOverlay ? 'opacity-40' : 'opacity-100'}`}></div>
+        {/* Anchor Dot - Centered on (xPos, yPos) */}
         <motion.div 
           animate={isOverlay ? { scale: [1, 1.4, 1], shadow: '0 0 20px rgba(99,102,241,0.6)' } : {}}
           transition={{ repeat: Infinity, duration: 2 }}
-          className={`w-6 h-6 border-4 border-white rounded-full bg-primary shadow-glow -mt-4 z-10 relative transition-transform ${isOverlay ? 'scale-125' : 'scale-100'}`}
+          className={`w-5 h-5 border-[3px] border-white rounded-full bg-primary shadow-glow z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ${isOverlay ? 'scale-125' : 'scale-100'}`}
         />
-      </motion.div>
       </div>
 
       {!isOverlay && (

@@ -54,51 +54,51 @@ export default function HousePaymentPage() {
       inputs={
         <div className="space-y-8">
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Property Price (₹)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Property Price (₹)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={house.propertyPrice} 
                 onChange={(e) => setHouseInput("propertyPrice", Number(e.target.value))} 
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" 
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Down Payment (₹)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Down Payment (₹)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={house.downPayment} 
                 onChange={(e) => setHouseInput("downPayment", Number(e.target.value))} 
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" 
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">₹</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">₹</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Interest Rate (%)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Interest Rate (%)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={house.interestRate} 
                 onChange={(e) => setHouseInput("interestRate", Number(e.target.value))} 
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" 
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">%</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">%</div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tenure (Years)</label>
+            <label className="text-[11px] font-black text-white uppercase tracking-widest ml-1">Tenure (Years)</label>
             <div className="relative group">
               <input 
                 type="number" 
                 value={house.tenure} 
                 onChange={(e) => setHouseInput("tenure", Number(e.target.value))} 
-                className="horizon-input !bg-white group-hover:shadow-glow transition-all" 
+                className="horizon-input bg-slate-700/50 text-white border-white/10 group-hover:border-primary/50 transition-all" 
               />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">YR</div>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/30 font-black text-lg">YR</div>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function HousePaymentPage() {
               <Calculator className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Monthly EMI</h3>
+              <h3 className="text-[10px] font-black text-white uppercase tracking-widest mb-1.5">Monthly EMI</h3>
               <p className="text-3xl font-black text-indigo-600 tracking-tight">₹{results.emi.toLocaleString('en-IN')}</p>
             </div>
           </motion.div>
@@ -119,8 +119,8 @@ export default function HousePaymentPage() {
               <Landmark className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Interest</h3>
-              <p className="text-3xl font-black text-slate-900 tracking-tight">₹{results.totalInterest.toLocaleString('en-IN')}</p>
+              <h3 className="text-[10px] font-black text-white uppercase tracking-widest mb-1.5">Total Interest</h3>
+              <p className="text-3xl font-black text-black tracking-tight">₹{results.totalInterest.toLocaleString('en-IN')}</p>
             </div>
           </motion.div>
         </>
